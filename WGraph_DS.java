@@ -4,20 +4,18 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 
-import ex0.node_data;
-
 public class WGraph_DS implements weighted_graph{
 	private HashMap<Integer,node_info> vertix = new HashMap<>();
 	private HashMap<pair,Double> edges = new HashMap<>();
 	private  int edgeSize;
 	private  int MC;
-	
+
 	public WGraph_DS() {
 
 		this.edgeSize = 0;
 		this.MC=0;
 		this.vertix = new HashMap<>();
-	
+
 	}
 	public WGraph_DS(weighted_graph gr) {
 
@@ -58,7 +56,7 @@ public class WGraph_DS implements weighted_graph{
 		}
 		return -1;
 	}
-//NOTICE: should adding the same node qualify as making change ?
+	//NOTICE: should adding the same node qualify as making change ?
 	@Override
 	public void addNode(int key) {
 		// TODO Auto-generated method stub
@@ -77,12 +75,12 @@ public class WGraph_DS implements weighted_graph{
 			if (!((NodeInfo) vertix.get(node1)).hasNi(node2) && !((NodeInfo) vertix.get(node2)).hasNi(node1)) {
 				((NodeInfo) vertix.get(node1)).addNi(vertix.get(node2));
 				((NodeInfo) vertix.get(node2)).addNi(vertix.get(node1));
-				
+
 				pair uno = new pair(node1,node2);
 				pair dos = new pair(node2,node1);
 				edges.put(uno, w);
 				edges.put(dos,w);
-				
+
 				edgeSize++;
 				MC++;
 			}
@@ -111,10 +109,10 @@ public class WGraph_DS implements weighted_graph{
 
 			edgeSize=edgeSize - getV(key).size();
 			MC = MC + 1 + getV(key).size();
-//remove this node from every neighbor's list
+			//remove this node from every neighbor's list
 			Iterator<node_info> i1 = getV(key).iterator();
-			
-// this while will loop through the node's neighbors and remove the node from their list of neighbors. 
+
+			// this while will loop through the node's neighbors and remove the node from their list of neighbors. 
 			while(i1.hasNext()) {
 				node_info temp = i1.next();
 				pair uno = new pair(key,temp.getKey());
@@ -158,7 +156,7 @@ public class WGraph_DS implements weighted_graph{
 	@Override
 	public int edgeSize() {
 		// TODO Auto-generated method stub
-		
+
 		//return edges.size()/2;
 		return edgeSize;
 	}
@@ -169,7 +167,7 @@ public class WGraph_DS implements weighted_graph{
 		return MC;
 	}
 
-	class pair{
+	public class pair{
 		private int node1, node2;
 
 		pair(){
@@ -186,8 +184,110 @@ public class WGraph_DS implements weighted_graph{
 		int getNode2() {
 			return node2;
 		}
-	
-		
 	}
+	public class NodeInfo implements node_info{
 
+		private int id;
+		private HashMap<Integer,node_info> neighbors = new HashMap<>();
+		private	String metadata="N";
+		private	double tag =0;
+		/**
+		 * A default constructor 
+		 */
+		public NodeInfo(int key) {
+			metadata = "";
+			neighbors = new HashMap<>();
+			tag = 0;
+			id=key;
+		}
+		/**
+		 * 
+		 * @param node 
+		 * A copy constructor 
+		 * @param neighbors -  ADD HERE EXPLANATION  
+		 */
+
+		public NodeInfo(NodeInfo node) {
+			metadata = node.getInfo();
+			neighbors = new HashMap<>();
+
+			Iterator<node_info> i = node.getNi().iterator();
+			while(i.hasNext()) {
+				node_info temp = i.next();
+				neighbors.put(temp.getKey(), temp);
+
+			}
+
+			tag = node.getTag();
+			id = node.getKey();
+		}
+
+		public Collection<node_info> getNi() {
+			// TODO Auto-generated method stub
+			return neighbors.values();
+		}
+		/**
+		 * return true iff this<==>key are adjacent, as an edge between them.
+		 * @param key
+		 * @return true of false
+		 */
+
+		public boolean hasNi(int key) {
+			if (neighbors.containsKey(key)) {
+				return true;}
+			return false;
+		}
+		/**
+		 * This method adds the node_data (t) to this node's list of neighbors
+		 */
+
+
+		public void addNi(node_info t) {
+			if (!neighbors.containsKey(id) )
+				neighbors.put(t.getKey(), t);
+			//t.addNi(this.);
+
+		}
+		/**
+		 * Removes the specific node from the list of neighbors,
+		 * @param node
+		 */
+
+		public void removeNode(node_info node) {
+			// TODO Auto-generated method stub
+			if (neighbors.containsKey(node.getKey()))
+				neighbors.remove(node.getKey(), node);
+		}
+		@Override
+		public int getKey() {
+			// TODO Auto-generated method stub
+			return id;
+		}
+
+		@Override
+		public String getInfo() {
+			// TODO Auto-generated method stub
+			return metadata;
+		}
+
+		@Override
+		public void setInfo(String s) {
+			// TODO Auto-generated method stub
+			this.metadata = s;
+
+		}
+
+		@Override
+		public double getTag() {
+			// TODO Auto-generated method stub
+			return tag;
+		}
+
+		@Override
+		public void setTag(double t) {
+			// TODO Auto-generated method stub
+			this.tag=t;
+
+		}
+	}
 }
