@@ -6,7 +6,7 @@ import java.util.Iterator;
 
 public class WGraph_DS implements weighted_graph{
 	private HashMap<Integer,node_info> vertix = new HashMap<>();
-	private HashMap<pair,Double> edges = new HashMap<>();
+	private HashMap<String,Double> edges = new HashMap<>();
 	private  int edgeSize;
 	private  int MC;
 
@@ -21,7 +21,6 @@ public class WGraph_DS implements weighted_graph{
 
 		edgeSize = gr.edgeSize();
 		MC= gr.getMC();
-
 
 		this.vertix = new HashMap<>();
 		Iterator<node_info> i = gr.getV().iterator();
@@ -42,8 +41,11 @@ public class WGraph_DS implements weighted_graph{
 	@Override
 	public boolean hasEdge(int node1, int node2) {
 		// TODO Auto-generated method stub
-		if (((NodeInfo) vertix.get(node1)).hasNi(node2))
-			return true;
+		if(node1==node2) return true;
+		if (vertix.containsKey(node1)&&vertix.containsKey(node2)) {
+			if (((NodeInfo) vertix.get(node1)).hasNi(node2))
+				return true;
+		}
 		return false;
 	}
 
@@ -51,8 +53,8 @@ public class WGraph_DS implements weighted_graph{
 	public double getEdge(int node1, int node2) {
 		// TODO Auto-generated method stub
 		if (vertix.containsKey(node1)&&vertix.containsKey(node2)) {
-			pair temp = new pair(node1,node2);
-			return edges.get(temp);
+			if (edges.containsKey("<"+node1+","+node2+">"))
+				return edges.get("<"+node1+","+node2+">");
 		}
 		return -1;
 	}
@@ -76,12 +78,17 @@ public class WGraph_DS implements weighted_graph{
 				((NodeInfo) vertix.get(node1)).addNi(vertix.get(node2));
 				((NodeInfo) vertix.get(node2)).addNi(vertix.get(node1));
 
-				pair uno = new pair(node1,node2);
-				pair dos = new pair(node2,node1);
-				edges.put(uno, w);
-				edges.put(dos,w);
+				edges.put("<"+node1+","+node2+">",w);
+				edges.put("<"+node2+","+node1+">",w);
 
 				edgeSize++;
+				MC++;
+			}
+			else if (edges.containsKey("<"+node1+","+node2+">")) {
+				edges.remove("<"+node1+","+node2+">");
+				edges.remove("<"+node2+","+node1+">");
+				edges.put("<"+node1+","+node2+">",w);
+				edges.put("<"+node2+","+node1+">",w);
 				MC++;
 			}
 		}
@@ -91,6 +98,11 @@ public class WGraph_DS implements weighted_graph{
 	public Collection<node_info> getV() {
 		// TODO Auto-generated method stub
 		return vertix.values();
+	}
+	public void getEdges() {
+		// TODO Auto-generated method stub
+		System.out.println(edges.values());
+		System.out.println(edges.keySet());
 	}
 
 	@Override
@@ -115,10 +127,8 @@ public class WGraph_DS implements weighted_graph{
 			// this while will loop through the node's neighbors and remove the node from their list of neighbors. 
 			while(i1.hasNext()) {
 				node_info temp = i1.next();
-				pair uno = new pair(key,temp.getKey());
-				pair dos = new pair(temp.getKey(),key);
-				edges.remove(uno);
-				edges.remove(dos);
+				edges.remove("<"+key+","+temp.getKey()+">");
+				edges.remove("<"+temp.getKey()+","+key+">");
 				((NodeInfo) temp).getNi().remove(getNode(key));
 			}
 			//remove every neighbor connected to the node
@@ -135,17 +145,20 @@ public class WGraph_DS implements weighted_graph{
 	@Override
 	public void removeEdge(int node1, int node2) {
 		// TODO Auto-generated method stub
-		if (node1!=node2) { 
-			node_info ver1 = vertix.get(node1);
-			node_info ver2 = vertix.get(node2);
-			if (((NodeInfo) ver1).hasNi(node2) && ((NodeInfo)ver2).hasNi(node1)) {
-				((NodeInfo)ver1).getNi().remove(ver2);
-				((NodeInfo)ver2).getNi().remove(ver1);
-				MC++;
-				edgeSize--;
+		if (vertix.containsKey(node1)&&vertix.containsKey(node2)) {
+			if (node1!=node2) { 
+				node_info ver1 = vertix.get(node1);
+				node_info ver2 = vertix.get(node2);
+				if (((NodeInfo) ver1).hasNi(node2) && ((NodeInfo)ver2).hasNi(node1)) {
+					((NodeInfo)ver1).getNi().remove(ver2);
+					((NodeInfo)ver2).getNi().remove(ver1);
+					edges.remove("<"+node1+","+node2+">");
+					edges.remove("<"+node2+","+node1+">");
+					MC++;
+					edgeSize--;
+				}
 			}
 		}
-
 	}
 	@Override
 	public int nodeSize() {
@@ -167,24 +180,6 @@ public class WGraph_DS implements weighted_graph{
 		return MC;
 	}
 
-	public class pair{
-		private int node1, node2;
-
-		pair(){
-			node1 = 0;
-			node2 = 0;
-		}
-		pair(int ver1,int ver2){
-			this.node1=ver1;
-			this.node2=ver2;
-		}
-		int getNode1() {
-			return node1;
-		}
-		int getNode2() {
-			return node2;
-		}
-	}
 	public class NodeInfo implements node_info{
 
 		private int id;
@@ -288,6 +283,10 @@ public class WGraph_DS implements weighted_graph{
 			// TODO Auto-generated method stub
 			this.tag=t;
 
+		}
+		public String toString() {
+			// TODO Auto-generated method stub
+			return ""+id;
 		}
 	}
 }

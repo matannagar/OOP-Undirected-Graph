@@ -1,5 +1,9 @@
 package ex1;
+import java.io.File;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
@@ -8,6 +12,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.PriorityQueue;
 import java.util.Queue;
+import java.util.Scanner;
+
 import ex1.WGraph_DS.NodeInfo;
 
 
@@ -76,6 +82,7 @@ public class WGraph_Algo implements weighted_graph_algorithms{
 		return shortestDist(source, destination);
 	}
 	@Override
+
 	public List<node_info> shortestPath(int src, int dest) {
 		// TODO Auto-generated method stub
 		if (dest < 0 || dest >= g0.nodeSize()) throw new IllegalArgumentException("Can't return an index bigger than the amount of nodes in graph");
@@ -89,42 +96,53 @@ public class WGraph_Algo implements weighted_graph_algorithms{
 		reset();
 		return path;
 	}
+
 	private double shortestDist(node_info src, node_info end){
 		//create a priority queue that will be able to extract the "best" next node; 
 		PriorityQueue<node_info> pq = new PriorityQueue<>(2*g0.nodeSize(),comparator);
 		pq.offer(src);
+		System.out.println(pq);
 		src.setTag(0);
 		src.setInfo("V");
-		this.parent = new node_info[g0.nodeSize()*2];
+		this.parent = new node_info[g0.nodeSize()];
+		System.out.println(Arrays.toString(parent));
 
 		double[] distance = new double[g0.nodeSize()*2];
-		distance[src.getKey()]=0;
 		for (int i = 0; i < distance.length; i++) {
 			distance[i]=Double.POSITIVE_INFINITY;
 		}
+		distance[src.getKey()-1]=0;
+
+		System.out.println(Arrays.toString(distance));
 
 		while (!pq.isEmpty()) {
+			System.out.println("try 1");
 			node_info node = pq.poll();
+			System.out.println(pq);
 			node.setInfo("V");
-			if(distance[node.getKey()]< node.getTag()) continue;
+			if(distance[node.getKey()-1]< node.getTag()) continue;
 
 			Collection <node_info> neighbors =   ((NodeInfo)node).getNi();
+			System.out.println(neighbors + " im the neighbors of"+" "+node.getKey());
 			for (node_info next: neighbors) {
 				node_info temp = next;
 
 				if(!temp.getInfo().equals("V")) {
-					double newDist = distance[node.getKey()] + g0.getEdge(node.getKey(), next.getKey());
-					parent[next.getKey()] =node;
-					distance[next.getKey()]=newDist;
+					double newDist = distance[node.getKey()-1] + g0.getEdge(node.getKey(), next.getKey());
+					System.out.println(newDist + "im the new dist");
+					System.out.println(Arrays.toString(distance));
+					parent[next.getKey()-1] =node;
+					distance[next.getKey()-1]=newDist;
 					next.setInfo("V");
 					pq.offer(next);
 					next.setTag(newDist);
 				}
 			}
-			if (node.getKey()==end.getKey()) return distance[end.getKey()];
+			if (node.getKey()==end.getKey()) return distance[end.getKey()-1];
 		}			
 		return -1;
 	}
+
 	private node_info[] loop(node_info src){
 		//we'll create a queue 
 		Queue<node_info> q = new LinkedList<node_info>();
@@ -147,39 +165,70 @@ public class WGraph_Algo implements weighted_graph_algorithms{
 		return parent;
 	}
 	@Override
+
 	public boolean save(String file) {
+		try {
+			File file_ = new File("myGraph.txt");
+
+			if (!file_.exists()) {
+				file_.createNewFile();
+			}
+			PrintWriter pw = new PrintWriter(file_);
+			pw.println("this is my file content");
+			pw.println(100);
+			System.out.println("done");
+		} catch (IOException e) {
+			// TODO: handle exception
+			e.printStackTrace();
+		}
 		// TODO Auto-generated method stub
 		return false;
 	}
 	@Override
+
 	public boolean load(String file) {
 		// TODO Auto-generated method stub
-		return false;
-	}
-	private void reset() {
-		Iterator<node_info> i = g0.getV().iterator();
-		while (i.hasNext()) {
-			node_info temp = i.next();
-			temp.setInfo("N");
+		System.out.println(new File("MyGraph.txt").getAbsolutePath());
+		try{
+			Scanner x = new Scanner(new File("MyGraph"));
+			while (x.hasNext()){
+				String a= x.next();
+				int c= Integer.valueOf(x.next());
+				String b= x.next();
+				System.out.println(c);
+			}
+		}
+		catch (Exception e){
+			System.out.println("Couldn't find the file");
 		}
 	}
 
-	private Comparator<node_info> comparator = new Comparator<node_info>() {
-		public int compare(node_info node1, node_info node2) {
-			double small = 0.0000000001;
-			if (Math.abs(node1.getTag() - node2.getTag()) < small) return 0;
-			return (node1.getTag() - node2.getTag()) > 0 ? +1 : -1;
-		}
 
-	};
-	public static class Node {
-		int id;
-		double value;
-
-		public Node(int id, double value) {
-
-			this.id = id;
-			this.value = value;
-		}
+private void reset() {
+	Iterator<node_info> i = g0.getV().iterator();
+	while (i.hasNext()) {
+		node_info temp = i.next();
+		temp.setInfo("N");
 	}
+}
+
+private Comparator<node_info> comparator = new Comparator<node_info>() {
+	public int compare(node_info node1, node_info node2) {
+		double small = 0.0000000001;
+		if (Math.abs(node1.getTag() - node2.getTag()) < small) return 0;
+		return (node1.getTag() - node2.getTag()) > 0 ? +1 : -1;
+	}
+
+};
+
+public static class Node {
+	int id;
+	double value;
+
+	public Node(int id, double value) {
+
+		this.id = id;
+		this.value = value;
+	}
+}
 }
