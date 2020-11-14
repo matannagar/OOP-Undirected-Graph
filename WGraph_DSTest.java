@@ -1,77 +1,217 @@
 package ex1;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Random;
+import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.Test;
 
-public class WGraph_DSTest {
-	public static void main(String[] args) {
-		weighted_graph g = graph_creator(6,6,1,1);
-		WGraph_DS g1 = (WGraph_DS) g;
-		System.out.println(g.getV());
-		g1.getEdges();
+import ex0.NodeInfo;
+import ex1.weighted_graph;
+
+class WGraph_DSTest {
+	private weighted_graph g;
+
+	@Test
+	void testWGraph_DS() {
+
 	}
 
-	private static Random _rndV = null;
-	private static Random _rndE = null;
+	@Test
+	void testWGraph_DSWeighted_graph() {
+	}
 
-	public static weighted_graph graph_creator(int v_size, int e_size, int seed1, int seed2) {
+	@Test
+	void testGetNode() {
+		this.g=myGraph();
+		//get a non-existent node
+		assertEquals(g.getNode(50),null);
+		//get the same expected node ID
+		assertEquals(g.getNode(4).getKey(),4);
+
+	}
+
+	@Test
+	void testHasEdge() {
+		this.g=myGraph();
+		//check for existing edge
+		assertEquals(g.hasEdge(1,3),true);
+		//check for an non existent edge
+		assertEquals(g.hasEdge(1,6),false);
+		//check for an edge between 2 non existent nodes
+		assertEquals(g.hasEdge(6,7),false);
+		//check for an edge between an existing node to a none existing node
+		assertEquals(g.hasEdge(1,7),false);
+	}
+
+	@Test
+	//build specific graph
+	void testGetEdge() {
+		this.g = myGraph();
+		//fetch a none existing edge between two inner nodes
+		assertEquals(-1,g.getEdge(1,6));
+		//fetch the size of existing edge
+		assertEquals(6,g.getEdge(1,5));
+		assertEquals(1,g.getEdge(1,3));
+		//remove edge and check if it's there
+		g.removeEdge(1, 3);
+		assertEquals(-1,g.getEdge(1,3));
+		//add edge an check if he was added
+		g.connect(1, 6, 4);
+		assertEquals(4,g.getEdge(1,6));
+		//remove node and try to get an edge that was connected to him
+		g.removeNode(6);
+		assertEquals(-1,g.getEdge(2, 6));
+	}
+	//************INSERT MORE SITUATIONS*********************
+	@Test
+	void testAddNode() {
+		this.g = myGraph();
+		//add node and check if he was added
+		g.addNode(7);
+		assertEquals(7,g.getNode(7).getKey());
+		//change node's info and check if it has been changed
+		g.getNode(7).setInfo("K");
+		assertEquals("K",g.getNode(7).getInfo());
+		//add same node with same number and check if was updated
+	}
+
+	@Test
+	void testConnect() {
+		this.g = myGraph();
+		//connect two existing nodes
+		g.connect(1, 6, 4);
+		assertEquals(4, g.getEdge(1, 6));
+		assertEquals(true, g.hasEdge(1, 6));
+		//connect two non-existent nodes
+		g.connect(7, 8, 1);
+		assertEquals(-1, g.getEdge(7,8));
+		assertEquals(false, g.hasEdge(7, 8));
+		//connect a node to itself and check if was added
+		g.connect(1, 1, 0);
+		assertEquals(8, g.edgeSize());
+		//connect two nodes with distance 0 
+		g.connect(3, 6, 0);
+		assertEquals(true, g.hasEdge(3, 6));
+		//update a connected existing edge
+		g.connect(1, 2, 2);
+		assertEquals(2.0, g.getEdge(2, 1));
+	}
+
+	@Test
+	void testGetV() {
+		this.g = myGraph();
+		//check if list has same num of nodes
+		assertEquals(6,g.nodeSize());
+		//add existing node and see if it changed num of nodes
+		g.addNode(1);
+		assertEquals(6,g.nodeSize());
+	}
+
+	@Test
+	void testGetList() {
+		//get non-existent edges
+
+	}
+
+	@Test
+	void testGetVInt() {
+		this.g=myGraph();
+		//get neighbor list of non-existent node
+		assertEquals(null, g.getV(7));	
+	}
+
+	@Test
+	void testRemoveNode() {
+		this.g=myGraph();
+		g.removeNode(6);
+		//check num of nodes
+		assertEquals(5,g.getV().size());
+		//check if it is not in the list anymore
+		assertEquals(false,(((WGraph_DS) g).getVhash().containsKey(6)));
+		//check if 6 was erased from 2 neighbor's list
+		assertEquals(false, g.getV(2).contains(g.getNode(6)));
+		//check if exists an edge between 2 and 6
+		assertEquals(-1, g.getEdge(2, 6));
+		//remove non-existent node
+		assertEquals(null, g.removeNode(7));
+	}
+
+	@Test
+	void testRemoveEdge() {
+		this.g=myGraph();
+		//remove non-existent edge
+		g.removeEdge(1, 6);
+		assertEquals(7, g.edgeSize());
+		//remove neighbors
+		g.removeEdge(2, 6);
+		assertEquals(false, g.getV(2).contains(g.getNode(6)));
+	}
+
+	@Test
+	void testNodeSize() {
+		this.g=myGraph();
+		//first check of nodes in graph
+		assertEquals(6, g.nodeSize());
+		//remove 2 nodes
+		g.removeNode(1);
+		g.removeNode(2);
+		assertEquals(4, g.nodeSize());
+		//add 2 nodes
+		g.addNode(7);
+		g.addNode(8);
+		assertEquals(6, g.nodeSize());
+	}
+
+	@Test
+	void testEdgeSize() {
+		this.g=myGraph();
+		//first test
+		assertEquals(7, g.edgeSize());
+		//remove center node
+		g.removeNode(3);
+		assertEquals(4, g.edgeSize());
+		g.removeNode(6);
+		assertEquals(3, g.edgeSize());
+
+	}
+
+	@Test
+	void testGetMC() {
+		this.g=myGraph();
+		assertEquals(13, g.getMC());
+		g.removeEdge(2, 6);
+		assertEquals(14, g.getMC());
+		g.removeNode(2);
+		assertEquals(17, g.getMC());
+		g.removeEdge(2, 6);
+		assertEquals(17, g.getMC());
+		g.addNode(1);
+		assertEquals(17, g.getMC());
+		g.removeNode(2);
+		assertEquals(17,g.getMC());
+	}
+	@Test
+	void testEquals() {
+		this.g=myGraph();
+		weighted_graph h = new WGraph_DS();
+		h=myGraph();
+		assertEquals(true,g.equals(h) );	
+	}
+	private static weighted_graph myGraph() {
 		weighted_graph g = new WGraph_DS();
-		_rndV = new Random(seed1);
-		_rndE = new Random(seed2);
-		for(int i=0;i<v_size;i++) {
-			g.addNode(i);
-		}
+		g.addNode(1);
+		g.addNode(2);
+		g.addNode(3);
+		g.addNode(4);
+		g.addNode(5);
+		g.addNode(6);
 
-		// Iterator<node_data> itr = V.iterator(); // Iterator is a more elegant and generic way, but KIS is more important
-		int[] nodes = nodes(g);
-		while(g.edgeSize() < e_size) {
-			int a = nextRnd(0,v_size);
-			int b = nextRnd(0,v_size);
-			double lenght = nextRndE(1,100);
-			int i = nodes[a];
-			int j = nodes[b];
-			g.connect(i,j,lenght);
-		}
+		g.connect(1,2,3);
+		g.connect(2, 3, 1);
+		g.connect(1, 3, 1);
+		g.connect(3, 4, 5);
+		g.connect(2, 6, 4);
+		g.connect(4, 5, 2);
+		g.connect(1, 5, 6);
 		return g;
 	}
 
-	private static int nextRnd(int min, int max) {
-		double v = nextRndV(0.0+min, (double)max);
-		int ans = (int)v;
-		return ans;
-	}
-	private static double nextRndV(double min, double max) {
-		double d = _rndV.nextDouble();
-		double dx = max-min;
-		double ans = d*dx+min;
-		return ans;
-	}
-	private static double nextRndE(double min, double max) {
-		double d = _rndE.nextDouble();
-		double dx = max-min;
-		double ans = d*dx+min;
-		return ans;
-	}
-	/**
-	 * Simple method for returning an array with all the node_data of the graph,
-	 * Note: this should be using an  Iterator<node_edge> to be fixed in Ex1
-	 * @param g
-	 * @return
-	 */
-	private static int[] nodes(weighted_graph g) {
-		int size = g.nodeSize();
-		Collection<node_info> V = g.getV();
-		node_info[] nodes = new node_info[size];
-		V.toArray(nodes); // O(n) operation
-		int[] ans = new int[size];
-		for(int i=0;i<size;i++) {
-			ans[i] = nodes[i].getKey();
-		}
-		Arrays.sort(ans);
-		return ans;
-	}
-	void getNode() {
-	
-	}
 }

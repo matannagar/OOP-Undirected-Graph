@@ -1,10 +1,15 @@
 package ex1;
 
+
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 
-public class WGraph_DS implements weighted_graph{
+public class WGraph_DS implements weighted_graph,java.io.Serializable{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private HashMap<Integer,node_info> vertix = new HashMap<>();
 	private HashMap<String,Double> edges = new HashMap<>();
 	private  int edgeSize;
@@ -37,7 +42,12 @@ public class WGraph_DS implements weighted_graph{
 			return vertix.get(key);
 		return null;
 	}
-
+	public HashMap<Integer, node_info> getVhash(){
+		return vertix;
+	}
+	public HashMap<String, Double> getEhash(){
+		return edges;
+	}
 	@Override
 	public boolean hasEdge(int node1, int node2) {
 		// TODO Auto-generated method stub
@@ -55,6 +65,8 @@ public class WGraph_DS implements weighted_graph{
 		if (vertix.containsKey(node1)&&vertix.containsKey(node2)) {
 			if (edges.containsKey("<"+node1+","+node2+">"))
 				return edges.get("<"+node1+","+node2+">");
+			else if (edges.containsKey("<"+node2+","+node1+">"))
+				return edges.get("<"+node2+","+node1+">");
 		}
 		return -1;
 	}
@@ -62,44 +74,45 @@ public class WGraph_DS implements weighted_graph{
 	@Override
 	public void addNode(int key) {
 		// TODO Auto-generated method stub
-		NodeInfo n = new NodeInfo(key);
-		int temp_size = vertix.size();
-		vertix.put(n.getKey(), n);
-		if(temp_size!=vertix.size())
+		if (!vertix.containsKey(key)) {
+			node_info n = new NodeInfo(key);
+			vertix.put(n.getKey(), n);
 			MC++;
+		}
 	}
-
 	@Override
 	public void connect(int node1, int node2, double w) {
 		// TODO Auto-generated method stub
 		if (vertix.containsKey(node1)&&vertix.containsKey(node2)&&node1!=node2){
+
 			//adding each node to the neighbor's list
-			if (!((NodeInfo) vertix.get(node1)).hasNi(node2) && !((NodeInfo) vertix.get(node2)).hasNi(node1)) {
+			if (!((NodeInfo) vertix.get(node1)).hasNi(node2) &&
+					!((NodeInfo) vertix.get(node2)).hasNi(node1)) {
+
 				((NodeInfo) vertix.get(node1)).addNi(vertix.get(node2));
 				((NodeInfo) vertix.get(node2)).addNi(vertix.get(node1));
-
-				edges.put("<"+node1+","+node2+">",w);
 				edges.put("<"+node2+","+node1+">",w);
-
 				edgeSize++;
 				MC++;
 			}
-			else if (edges.containsKey("<"+node1+","+node2+">")) {
+			else if (edges.containsKey("<"+node1+","+node2+">")){
 				edges.remove("<"+node1+","+node2+">");
-				edges.remove("<"+node2+","+node1+">");
 				edges.put("<"+node1+","+node2+">",w);
+				MC++;
+			}
+			else if  (edges.containsKey("<"+node2+","+node1+">")){
+				edges.remove("<"+node2+","+node1+">");
 				edges.put("<"+node2+","+node1+">",w);
 				MC++;
 			}
 		}
 	}
-
 	@Override
 	public Collection<node_info> getV() {
 		// TODO Auto-generated method stub
 		return vertix.values();
 	}
-	public void getEdges() {
+	public void edgeList() {
 		// TODO Auto-generated method stub
 		System.out.println(edges.values());
 		System.out.println(edges.keySet());
@@ -127,8 +140,11 @@ public class WGraph_DS implements weighted_graph{
 			// this while will loop through the node's neighbors and remove the node from their list of neighbors. 
 			while(i1.hasNext()) {
 				node_info temp = i1.next();
-				edges.remove("<"+key+","+temp.getKey()+">");
-				edges.remove("<"+temp.getKey()+","+key+">");
+				if (edges.containsKey("<"+key+","+temp.getKey()+">"))
+					edges.remove("<"+key+","+temp.getKey()+">");
+				else if (edges.containsKey("<"+temp.getKey()+","+key+">"))			
+					edges.remove("<"+temp.getKey()+","+key+">");
+
 				((NodeInfo) temp).getNi().remove(getNode(key));
 			}
 			//remove every neighbor connected to the node
@@ -179,9 +195,34 @@ public class WGraph_DS implements weighted_graph{
 		// TODO Auto-generated method stub
 		return MC;
 	}
-
-	public class NodeInfo implements node_info{
-
+	public boolean equals(Object o) {
+		//check if they are same type object
+		if (this==o) return true;
+		WGraph_DS g = (WGraph_DS) o;
+		System.out.println("1");
+		if (o==null|| getClass() != o.getClass()) return false;
+		//compare two HASHMAPS
+		System.out.println("3");
+		if (!this.edges.equals(g.getEhash())) return false;
+		System.out.println("2");
+		if (!this.vertix.equals(g.getVhash())) return false;
+		//compare num of changes
+		System.out.println("4");
+		if (this.MC != g.getMC()) return false;
+		System.out.println("5");
+		return true;
+	}
+	@Override
+	public String toString() {
+		// TODO Auto-generated method stub
+		String k = ""+edges;
+		return k;
+	}
+	public class NodeInfo implements node_info,java.io.Serializable{
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 1L;
 		private int id;
 		private HashMap<Integer,node_info> neighbors = new HashMap<>();
 		private	String metadata="N";
@@ -216,7 +257,15 @@ public class WGraph_DS implements weighted_graph{
 			tag = node.getTag();
 			id = node.getKey();
 		}
-
+		public boolean equals(Object o) {
+			if (this == o) return true;
+			NodeInfo node = (NodeInfo) o;
+			if (this.id != node.getKey()) return false;
+			if (!this.metadata.equals(node.getInfo())) return false;
+			if (this.tag != node.getTag()) return false;
+			
+			return true;
+		}
 		public Collection<node_info> getNi() {
 			// TODO Auto-generated method stub
 			return neighbors.values();

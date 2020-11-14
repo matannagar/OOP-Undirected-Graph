@@ -3,48 +3,59 @@ package ex1;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.Collection;
 import java.util.Scanner;
 
 import javax.print.DocFlavor.URL;
 
+import ex0.NodeInfo;
+
 public class temp {
 	public static void main(String[] args) {
-		WGraph_DS g = new WGraph_DS();
+		weighted_graph g = new WGraph_DS();
 		g.addNode(1);
 		g.addNode(2);
 		g.addNode(3);
+		g.addNode(4);
+		g.addNode(5);
+		g.addNode(6);
 
 		g.connect(1,2,3);
 		g.connect(2, 3, 1);
 		g.connect(1, 3, 1);
-		weighted_graph_algorithms g0 = new WGraph_Algo();
-		g0.init(g);
+		g.connect(3, 4, 5);
+		g.connect(2, 6, 4);
+		g.connect(4, 5, 2);
+		g.connect(1, 5, 6);
 
-		try {
-			File file_ = new File("myGraph.txt");
+		System.out.println(g.edgeSize());
+		System.out.println(g.toString());
+		System.out.println(g.getV(2));
+		g.removeNode(6);
+		System.out.println(g.getV(2));
+		System.out.println(g.getV(2).contains(g.getNode(6)));
+		
+		System.out.println(g.getEdge(1, 2));
+		g.connect(1, 2, 2);
+		System.out.println(g.getEdge(2, 1));
+	}
+	private static weighted_graph myGraph() {
+		weighted_graph g = new WGraph_DS();
+		g.addNode(1);
+		g.addNode(2);
+		g.addNode(3);
+		g.addNode(4);
+		g.addNode(5);
+		g.addNode(6);
 
-			if (!file_.exists()) {
-				file_.createNewFile();
-			}
-			PrintWriter pw = new PrintWriter(file_);
-			pw.println("this is my file content");
-			pw.println(5);
-			pw.close();
-			System.out.println("done");
-		} catch (IOException e) {
-			// TODO: handle exception
-			e.printStackTrace();
-		}
-		
-		
-		try{
-			Scanner x = new Scanner(new File("myGraph.txt"));
-			while (x.hasNext()){
-				System.out.println(x.next());
-			}
-		}
-		catch (Exception e){
-			System.out.println("Couldn't find the file");
-		}
+		g.connect(1,2,3);
+		g.connect(2, 3, 1);
+		g.connect(1, 3, 1);
+		g.connect(3, 4, 5);
+		g.connect(4, 6, 3);
+		g.connect(2, 6, 4);
+		g.connect(4, 5, 2);
+		g.connect(1, 5, 6);
+		return g;
 	}
 }
