@@ -1,14 +1,17 @@
 package ex1;
 
 import static org.junit.jupiter.api.Assertions.*;
+
+import java.util.Date;
+
 import org.junit.jupiter.api.Test;
 
-import ex0.NodeInfo;
+import ex1.WGraph_DS;
 import ex1.weighted_graph;
 
 class WGraph_DSTest {
 	private weighted_graph g;
-
+	
 	@Test
 	void testWGraph_DS() {
 
@@ -174,6 +177,7 @@ class WGraph_DSTest {
 	}
 
 	@Test
+
 	void testGetMC() {
 		this.g=myGraph();
 		assertEquals(13, g.getMC());
@@ -189,11 +193,24 @@ class WGraph_DSTest {
 		assertEquals(17,g.getMC());
 	}
 	@Test
+
 	void testEquals() {
 		this.g=myGraph();
 		weighted_graph h = new WGraph_DS();
 		h=myGraph();
 		assertEquals(true,g.equals(h) );	
+	}
+@Test
+	void testCreate(){
+		
+		 long start = new Date().getTime();
+		 int no = 1000*50, ed = 302650;
+		generateGraph(no,ed,100);
+		long end   = new Date().getTime();
+		double dt = (end-start)/1000.0;
+		boolean t = dt<5;
+		assertEquals(true, t);
+
 	}
 	private static weighted_graph myGraph() {
 		weighted_graph g = new WGraph_DS();
@@ -213,5 +230,23 @@ class WGraph_DSTest {
 		g.connect(1, 5, 6);
 		return g;
 	}
+	private static weighted_graph generateGraph(int nodes, int edges, double length) {
+		weighted_graph g = new WGraph_DS();
+		for (int i = 1; i < nodes; i++) {
+			g.addNode(i);
+		}
+		while (g.edgeSize()<edges) {
+			int a = (int) getRan(nodes);
+			int b = (int) getRan(nodes);
+			double c = getRan(length);
+			g.connect(a, b, c);
+		}
 
+		return g;
+	}
+	private static double getRan(double max) {
+		Double d = ((Math.random() * (max - 1 + 1)) + 1);
+
+		return (double)Math.round(d * 100d) / 100d;
+	}
 }

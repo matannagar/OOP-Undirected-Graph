@@ -17,17 +17,26 @@ import ex1.WGraph_DS.NodeInfo;
 
 public class WGraph_Algo implements weighted_graph_algorithms,java.io.Serializable{
 	/**
-	 * 
+	 * This class implements the interface weighted_graph_algorithms
+	 * We used dijkstra's algorithm, a bfs based algorithm 
+	 * this class hold's an array for storing the distance of a node
+	 * from source node 
 	 */
 	private static final long serialVersionUID = 1L;
 	private weighted_graph g0;
 	private node_info[] parent;
 	private int space;
-
+	/**
+	 * default constructor
+	 */
 	public WGraph_Algo() {
 		this.g0 = new WGraph_DS();
 		this.space = space + g0.edgeSize();
 	}
+	/**
+	 * Initialize an existing graph so that this set of algorithms
+	 * can be implemented
+	 */
 	@Override
 	public void init(weighted_graph g) {
 		this.g0 = g;
@@ -35,11 +44,17 @@ public class WGraph_Algo implements weighted_graph_algorithms,java.io.Serializab
 		// TODO Auto-generated method stub
 
 	}
+	/**
+	 * @return the init graph
+	 */
 	@Override
 	public weighted_graph getGraph() {
 		// TODO Auto-generated method stub
 		return g0;
 	}
+	/**
+	 * return a deep copy of this weighted_graph
+	 */
 	@Override
 	public weighted_graph copy() {
 		// TODO Auto-generated method stub
@@ -48,6 +63,10 @@ public class WGraph_Algo implements weighted_graph_algorithms,java.io.Serializab
 		return (weighted_graph) g1;
 	}
 	@Override
+	/**
+	 * @return true iff every node in the graph has been visited
+	 * by the bfs algorithm - loop 	
+	 */
 	public boolean isConnected() {
 		// TODO Auto-generated method stub
 		if (g0.getV().isEmpty()) return true;
@@ -142,6 +161,14 @@ public class WGraph_Algo implements weighted_graph_algorithms,java.io.Serializab
 		}
 		return -1;
 	}
+	/**
+	 * 
+	 * @param src
+	 * @return an array that hold's the parent node of each node
+	 * in the node's id place in the array.
+	 * this method is based on a BFS algorithm that tries to loop through
+	 * the entire list of nodes in the graph and mark each one of them as "V"
+	 */
 	private node_info[] loop(node_info src){
 		//we'll create a queue 
 		Queue<node_info> q = new LinkedList<node_info>();
@@ -163,6 +190,12 @@ public class WGraph_Algo implements weighted_graph_algorithms,java.io.Serializab
 		}			
 		return parent;
 	}
+	/**
+	 *Saves this weighted (undirected) graph to the given
+	 * file name using the Serialized method implemented in java
+	 * @param file - the file name (may include a relative path).
+	 * @return true - iff the file was successfully saved
+	 */
 	@Override
 	public boolean save(String file) {
 		String filename = "myGraph.txt";
@@ -184,8 +217,15 @@ public class WGraph_Algo implements weighted_graph_algorithms,java.io.Serializab
 		System.out.println("Object has been Serialized");
 		return true;
 	}
+	/**
+     * This method load a graph to this graph algorithm.
+     * if the file was successfully loaded - the underlying graph
+     * of this class will be changed (to the loaded one), in case the
+     * graph was not loaded the original graph should remain "as is".
+     * @param file - file name
+     * @return true - iff the graph was successfully loaded.
+     */
 	@Override
-	
 	public boolean load(String file) {
 		// TODO Auto-generated method stub
 		System.out.println("Desrialize from: "+ file );
@@ -211,6 +251,11 @@ public class WGraph_Algo implements weighted_graph_algorithms,java.io.Serializab
 			temp.setInfo("");
 		}
 	}
+	/**
+	 * This comparator helps the PriorityQueue prioritize which
+	 * node he should pull out of the Queue next based on the
+	 * tag info.
+	 */
 	private Comparator<node_info> myCompare = new Comparator<node_info>() {
 		public int compare(node_info node1, node_info node2) {
 			double small = 0.00001;
