@@ -1,4 +1,4 @@
-#**Weighted Graph**
+#**Weighted Graph**#
 
 This projects implements an undirected graph, including vertices, edges and a few graph traversal algorithms.
 
