@@ -121,7 +121,8 @@ public class WGraph_Algo implements weighted_graph_algorithms,java.io.Serializab
 			if (src < 0 || src >= 2*g0.nodeSize()) return path;
 			double dist = shortestPathDist(src, dest);
 			if (dist == -1) return path;
-			for (node_info at = g0.getNode(dest); at != null; at = parent[at.getKey()-1]) 
+			//***
+			for (node_info at = g0.getNode(dest); at != null; at = parent[at.getKey()]) 
 				path.add(at);
 			Collections.reverse(path);
 			reset();
@@ -152,22 +153,27 @@ public class WGraph_Algo implements weighted_graph_algorithms,java.io.Serializab
 			for (int i = 0; i < distance.length; i++) {
 				distance[i]=Double.POSITIVE_INFINITY;
 			}
-			distance[src.getKey()-1]=0;
+			//***
+			distance[src.getKey()]=0;
 
 			while (!pq.isEmpty()) {
 				node_info node = pq.poll();
 				node.setInfo("V");
-
-				if(distance[node.getKey()-1]>= node.getTag()) { 
+//***
+				if(distance[node.getKey()]>= node.getTag()) { 
 					Collection <node_info> neighbors =   ((NodeInfo)node).getNi();
 					for (node_info next: neighbors) {
 						node_info temp = next;
 
 						if(!temp.getInfo().equals("V")) { 
-							double newDist = distance[node.getKey()-1] + g0.getEdge(node.getKey(), temp.getKey());
-							if (newDist<distance[temp.getKey()-1]) {
-								parent[temp.getKey()-1] =node;
-								distance[temp.getKey()-1]=newDist;
+							//***
+							double newDist = distance[node.getKey()] + g0.getEdge(node.getKey(), temp.getKey());
+							//***
+							if (newDist<distance[temp.getKey()]) {
+								//***
+								parent[temp.getKey()] =node;
+								//***
+								distance[temp.getKey()]=newDist;
 								temp.setTag(newDist);
 								pq.add(temp);	
 							}	
@@ -175,7 +181,8 @@ public class WGraph_Algo implements weighted_graph_algorithms,java.io.Serializab
 					}
 				}
 				if (node.getKey()==end.getKey()) {reset();
-				return distance[end.getKey()-1];
+				//***
+				return distance[end.getKey()];
 				}
 			}
 			reset();
@@ -205,7 +212,8 @@ public class WGraph_Algo implements weighted_graph_algorithms,java.io.Serializab
 				if(!temp.getInfo().equals("V")) {
 					q.add(next);
 					next.setInfo("V");
-					parent[next.getKey()-1] = node;
+					//***
+					parent[next.getKey()] = node;
 				}
 			}
 		}			
@@ -219,10 +227,10 @@ public class WGraph_Algo implements weighted_graph_algorithms,java.io.Serializab
 	 */
 	@Override
 	public boolean save(String file) {
-		String filename = "myGraph.txt";
+//		String filename = "myGraph.txt";
 		try {
 			//saving object in a file -- not readable, only to the computer
-			FileOutputStream gFile = new FileOutputStream(filename);
+			FileOutputStream gFile = new FileOutputStream(file);
 			ObjectOutputStream out = new ObjectOutputStream(gFile);
 			//Serialization of object
 			out.writeObject(g0);
