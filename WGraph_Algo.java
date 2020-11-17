@@ -93,6 +93,13 @@ public class WGraph_Algo implements weighted_graph_algorithms,java.io.Serializab
 		return true;
 	}
 	@Override
+	/**
+	 * @param node_info source, node_info distance
+	 * @return double, showing the minimal distance from source node to an end node
+	 * this function is based on dijkstra's algorithm and return -1 if such a path
+	 * does not exist.
+	 * 
+	 */
 	public double shortestPathDist(int src, int dest) {
 		// TODO Auto-generated method stub
 		node_info source = g0.getNode(src);
@@ -101,13 +108,17 @@ public class WGraph_Algo implements weighted_graph_algorithms,java.io.Serializab
 		return shortestDist(source, destination);
 	}
 	@Override
-
+/**
+ * @param node_info source, node_info end
+ * @return a list on nodes, representing the shortest path from source node to end node
+ * considering the weights of each edge
+ */
 	public List<node_info> shortestPath(int src, int dest) {
 		// TODO Auto-generated method stub
 		List<node_info> path = new ArrayList<>();
 		if (g0.getV().contains(g0.getNode(src))&&g0.getV().contains(g0.getNode(dest))) {
-			if (dest < 0 || dest >= 2*g0.nodeSize()) throw new IllegalArgumentException("Can't return an index bigger than the amount of nodes in graph");
-			if (src < 0 || src >= 2*g0.nodeSize()) throw new IllegalArgumentException("Invalid node index");
+			if (dest < 0 || dest >= 2*g0.nodeSize()) return path;
+			if (src < 0 || src >= 2*g0.nodeSize()) return path;
 			double dist = shortestPathDist(src, dest);
 			if (dist == -1) return path;
 			for (node_info at = g0.getNode(dest); at != null; at = parent[at.getKey()-1]) 
@@ -118,6 +129,16 @@ public class WGraph_Algo implements weighted_graph_algorithms,java.io.Serializab
 		}
 		return path;
 	}
+	/**
+	 * @param source node, end node
+	 * @return a parent array of nodes and a min distance 
+	 * this function is based on Dijkstra's algorithm, implemented by using a Priority Queue 
+	 * and an inner comparator. 
+	 * The func fixes a single node as the "source" node and finds shortest paths from the source to all other 
+	 * nodes in the graph, producing a shortest-path array.
+	 * For a given source node in the graph, the algorithm finds the shortest path between that node and every other.
+	 * 
+	 */
 	private double shortestDist(node_info src, node_info end){
 		//create a priority queue that will be able to extract the "best" next node; 
 		if (g0.getV().contains(src)&&g0.getV().contains(end)) {

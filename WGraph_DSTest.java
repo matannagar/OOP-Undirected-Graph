@@ -11,7 +11,7 @@ import ex1.weighted_graph;
 
 class WGraph_DSTest {
 	private weighted_graph g;
-	
+
 	@Test
 	void testWGraph_DS() {
 
@@ -200,17 +200,25 @@ class WGraph_DSTest {
 		h=myGraph();
 		assertEquals(true,g.equals(h) );	
 	}
-@Test
-	void testCreate(){
-		
-		 long start = new Date().getTime();
-		 int no = 1000*50, ed = 302650;
-		generateGraph(no,ed,100);
+	@Test
+	void testTime(){
+		//big graph
+		long start = new Date().getTime();
+		int no = 1000*50, ed = 302650;
+		weighted_graph g = generateGraph(no,ed,100);
 		long end   = new Date().getTime();
 		double dt = (end-start)/1000.0;
 		boolean t = dt<5;
 		assertEquals(true, t);
-
+		for (int i = 0; i < g.nodeSize(); i++) {
+			g.connect(1, i, getRan(100));
+		}
+		long begin = new Date().getTime();
+		g.removeNode(1);
+		long stop   = new Date().getTime();
+		dt = (stop-begin)/1000.0;
+		t = dt<5;
+		assertEquals(true, t);
 	}
 	private static weighted_graph myGraph() {
 		weighted_graph g = new WGraph_DS();
