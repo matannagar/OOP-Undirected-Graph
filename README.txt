@@ -1,4 +1,4 @@
-Weighted Graph 
+#**Weighted Graph** 
 
 In this assignment we've been asked to write a code describing an undirected weighted graph. 
 I have implemented this with the following classes:
@@ -32,5 +32,3 @@ https://en.wikipedia.org/wiki/Dijkstra%27s_algorithm
 https://www.youtube.com/watch?v=pVfj6mxhdMw&t=434s&ab_channel=ComputerScience
 https://www.youtube.com/watch?v=pSqmAO-m7Lk&t=639s&ab_channel=WilliamFiset
 https://www.youtube.com/watch?v=oDqjPvD54Ss&ab_channel=WilliamFiset
-
-
