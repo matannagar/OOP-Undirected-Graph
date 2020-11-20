@@ -1,4 +1,4 @@
-package ex1;
+package ex1.src;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -13,7 +13,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.PriorityQueue;
 import java.util.Queue;
-import ex1.WGraph_DS.NodeInfo;
+import ex1.src.WGraph_DS.NodeInfo;
 
 public class WGraph_Algo implements weighted_graph_algorithms,java.io.Serializable{
 	/**

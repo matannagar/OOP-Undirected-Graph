@@ -1,4 +1,4 @@
-package ex1;
+package ex1.tests;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -6,8 +6,8 @@ import java.util.Date;
 
 import org.junit.jupiter.api.Test;
 
-import ex1.WGraph_DS;
-import ex1.weighted_graph;
+import ex1.src.WGraph_DS;
+import ex1.src.weighted_graph;
 
 class WGraph_DSTest {
 	private weighted_graph g;

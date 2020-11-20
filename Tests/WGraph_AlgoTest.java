@@ -1,4 +1,4 @@
-package ex1;
+package ex1.tests;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -6,6 +6,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.jupiter.api.Test;
+
+import ex1.src.WGraph_Algo;
+import ex1.src.WGraph_DS;
+import ex1.src.node_info;
+import ex1.src.weighted_graph;
+import ex1.src.weighted_graph_algorithms;
 
 class WGraph_AlgoTest {
 	private weighted_graph g;
